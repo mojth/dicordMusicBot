@@ -1,5 +1,6 @@
 package de.tmoj.discordbot.music;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -8,6 +9,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
 public class Scheduler extends AudioEventAdapter {
 
@@ -42,6 +44,13 @@ public class Scheduler extends AudioEventAdapter {
     }
 
     public List<String> list() {
-        return queue.stream().map(t -> t.getInfo().title + " - " + t.getInfo().author).toList();
+        ArrayList<String> tracks = new ArrayList<>();
+        AudioTrack playingTrack = audioPlayer.getPlayingTrack();
+        if (playingTrack != null) {
+            AudioTrackInfo playingTrackInfo = playingTrack.getInfo();
+            tracks.add("Now playing: " + playingTrackInfo.title + " - " + playingTrackInfo.author);
+        }
+        queue.stream().map(t -> t.getInfo().title + " - " + t.getInfo().author).forEach(tracks::add);
+        return tracks;
     }
 }

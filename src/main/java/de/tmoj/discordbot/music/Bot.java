@@ -159,7 +159,9 @@ public class Bot extends ListenerAdapter {
         for (String track : tracks) {
             joiner.add(track);
         }
-        MessageEmbed embed = new EmbedBuilder().setTitle("Playlist").setDescription(joiner.toString()).build();
+        String trackListString = joiner.toString();
+        MessageEmbed embed = new EmbedBuilder().setTitle("Playlist")
+                .setDescription(trackListString.isBlank() ? "no tracks scheduled" : trackListString).build();
         event.getChannel().sendMessageEmbeds(embed).queue();
     }
 
