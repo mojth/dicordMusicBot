@@ -40,7 +40,6 @@ public class Bot extends ListenerAdapter {
     private Map<Long, Scheduler> schedulerMap;
 
     public static void main(String[] args) throws LoginException {
-        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "Debug");
         LOGGER.debug("Debug logging enabled");
         if (args.length != 1) {
             System.out.println("Usage: Provide the Token as first and only argument");
@@ -101,14 +100,14 @@ public class Bot extends ListenerAdapter {
         audioPlayerManager.loadItemOrdered(scheduler, args[1], new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                LOGGER.info("Track Loaded: " + track.getIdentifier());
+                LOGGER.debug("Track Loaded: " + track.getIdentifier());
                 scheduler.addToQueue(track);
                 event.getChannel().sendMessage(track.getInfo().title + " added to queue").queue();
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                LOGGER.info("paylist Loaded: " + playlist.getName());
+                LOGGER.debug("paylist Loaded: " + playlist.getName());
                 for (AudioTrack track : playlist.getTracks()) {
                     scheduler.addToQueue(track);
                     event.getChannel().sendMessage(track.getInfo().title + " added to queue").queue();
@@ -117,7 +116,7 @@ public class Bot extends ListenerAdapter {
 
             @Override
             public void noMatches() {
-                LOGGER.info("No matches for " + args[1]);
+                LOGGER.debug("No matches for " + args[1]);
                 event.getChannel().sendMessage(WARN_EMOJI + " can't find Track " + args[1]).queue();
             }
 
