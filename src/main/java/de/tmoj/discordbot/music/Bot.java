@@ -1,5 +1,6 @@
 package de.tmoj.discordbot.music;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,9 +23,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -45,8 +46,8 @@ public class Bot extends ListenerAdapter {
             System.out.println("Usage: Provide the Token as first and only argument");
             System.exit(1);
         }
-        JDABuilder.createLight(args[0], GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_VOICE_STATES)
-                .addEventListeners(new Bot()).build();
+        JDABuilder.createLight(args[0], GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT,
+                GatewayIntent.GUILD_VOICE_STATES).addEventListeners(new Bot()).build();
     }
 
     public Bot() {
@@ -65,11 +66,12 @@ public class Bot extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         String contentRaw = event.getMessage().getContentRaw();
+        LOGGER.debug(contentRaw);
         if (!contentRaw.startsWith(PREFIX)) {
             return;
         }
         String args[] = contentRaw.trim().split("\\s");
-        LOGGER.debug("Recieved arguments: " + args.toString());
+        LOGGER.debug("Recieved arguments: " + Arrays.toString(args));
         switch (args[0]) {
         case "!play" -> play(args, event);
         case "!skip" -> skip(event.getGuild());
@@ -165,7 +167,7 @@ public class Bot extends ListenerAdapter {
         event.getChannel().sendMessageEmbeds(embed).queue();
     }
 
-    private void help(MessageChannel messageChannel) {
+    private void help(MessageChannelUnion messageChannel) {
         messageChannel.sendMessageEmbeds(help).queue();
     }
 
